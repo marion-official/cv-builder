@@ -1,0 +1,6 @@
+cv_data.db
+*.pdf
+__pycache__/
+*.pyc
+.idea/
+.env
