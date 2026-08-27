@@ -75,21 +75,51 @@ SUBMIT_TOOL = {
                 "items": {"type": "string"},
                 "description": "Skills ordered by relevance to the target role.",
             },
+            "projects": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "url": {"type": "string"},
+                        "bullets": {"type": "array", "items": {"type": "string"}},
+                    },
+                    "required": ["name"],
+                },
+            },
+            "certifications": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "issuer": {"type": "string"},
+                        "date": {"type": "string"},
+                    },
+                    "required": ["name"],
+                },
+            },
         },
         "required": ["contact", "summary", "experiences", "skills"],
     },
 }
 
 SYSTEM_PROMPT = """You are a CV tailoring assistant. You have tools to fetch \
-a candidate's real, on-file data (profile, experiences, education, skills). \
-You do not know anything about the candidate except what those tools return.
+a candidate's real, on-file data (profile, experiences, education, skills, \
+projects, certifications). You do not know anything about the candidate \
+except what those tools return.
 
 Rules:
 - Always call the read-only tools first to gather the candidate's actual data. \
-Never invent employers, dates, degrees, or skills that were not returned by a tool.
-- You may select a subset of experiences/bullets/skills and rephrase bullet \
-wording to emphasize relevance to the target role, but do not fabricate \
+Never invent employers, dates, degrees, skills, projects, or certifications \
+that were not returned by a tool.
+- You may select a subset of experiences/bullets/skills/projects and rephrase \
+bullet wording to emphasize relevance to the target role, but do not fabricate \
 accomplishments that aren't grounded in the retrieved bullets.
+- Only include projects that are relevant to the target role; it's fine to \
+submit no projects at all if none of them add value for this application. The \
+same applies to certifications: include the ones relevant to the role, and \
+omit the rest.
 - The candidate's profile may include a base `summary` and `career_goals`. \
 Treat these as seed material, not fixed text: rewrite the summary for the \
 `submit_tailored_cv` output so it emphasizes the parts of the candidate's \

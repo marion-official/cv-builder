@@ -55,6 +55,28 @@ def cmd_add_education(args):
     print(f"Education #{edu_id} added.")
 
 
+def cmd_add_project(args):
+    conn = db.get_connection()
+    project_id = db.add_project(
+        conn,
+        name=args.name,
+        url=args.url,
+        bullets=args.bullet or [],
+    )
+    print(f"Project #{project_id} added.")
+
+
+def cmd_add_certification(args):
+    conn = db.get_connection()
+    cert_id = db.add_certification(
+        conn,
+        name=args.name,
+        issuer=args.issuer,
+        date=args.date,
+    )
+    print(f"Certification #{cert_id} added.")
+
+
 def cmd_add_skill(args):
     conn = db.get_connection()
     for name in args.name:
@@ -74,6 +96,12 @@ def cmd_list(args):
     print("\nSkills:")
     for skill in db.list_skills(conn):
         print(" -", skill)
+    print("\nProjects:")
+    for project in db.list_projects(conn):
+        print(" -", project)
+    print("\nCertifications:")
+    for cert in db.list_certifications(conn):
+        print(" -", cert)
 
 
 def cmd_generate(args):
@@ -129,6 +157,18 @@ def build_parser():
     p.add_argument("--end")
     p.add_argument("--details")
     p.set_defaults(func=cmd_add_education)
+
+    p = sub.add_parser("add-project", help="Add a project or piece of technical writing.")
+    p.add_argument("--name", required=True)
+    p.add_argument("--url")
+    p.add_argument("--bullet", action="append", help="Repeatable: one description bullet per flag.")
+    p.set_defaults(func=cmd_add_project)
+
+    p = sub.add_parser("add-certification", help="Add a certification.")
+    p.add_argument("--name", required=True)
+    p.add_argument("--issuer")
+    p.add_argument("--date")
+    p.set_defaults(func=cmd_add_certification)
 
     p = sub.add_parser("add-skill", help="Add one or more skills.")
     p.add_argument("--name", required=True, nargs="+")

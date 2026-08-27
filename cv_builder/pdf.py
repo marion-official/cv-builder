@@ -127,5 +127,35 @@ def render_cv(content: dict, output_path: str) -> str:
         flow.append(Paragraph("Skills", styles["SectionHeading"]))
         flow.append(Paragraph(", ".join(skills), styles["Normal"]))
 
+    projects = content.get("projects") or []
+    if projects:
+        flow.append(Paragraph("Projects", styles["SectionHeading"]))
+        for project in projects:
+            heading = f"<b>{project.get('name', '')}</b>"
+            if project.get("url"):
+                heading += f" &nbsp;&nbsp;<i>{project['url']}</i>"
+            flow.append(Paragraph(heading, styles["EntryHeading"]))
+
+            bullets = project.get("bullets") or []
+            if bullets:
+                flow.append(
+                    ListFlowable(
+                        [ListItem(Paragraph(b, styles["Normal"])) for b in bullets],
+                        bulletType="bullet",
+                        leftIndent=16,
+                    )
+                )
+
+    certifications = content.get("certifications") or []
+    if certifications:
+        flow.append(Paragraph("Certifications", styles["SectionHeading"]))
+        for cert in certifications:
+            line = f"<b>{cert.get('name', '')}</b>"
+            if cert.get("issuer"):
+                line += f", {cert['issuer']}"
+            if cert.get("date"):
+                line += f" &nbsp;&nbsp;<i>{cert['date']}</i>"
+            flow.append(Paragraph(line, styles["EntryHeading"]))
+
     doc.build(flow)
     return output_path

@@ -42,6 +42,20 @@ CREATE TABLE IF NOT EXISTS skills (
     name TEXT NOT NULL,
     category TEXT
 );
+
+CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    url TEXT,
+    bullets TEXT NOT NULL DEFAULT '[]'
+);
+
+CREATE TABLE IF NOT EXISTS certifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    issuer TEXT,
+    date TEXT
+);
 """
 
 
@@ -134,4 +148,39 @@ def add_skill(conn, name, category=None) -> int:
 
 def list_skills(conn) -> list[dict]:
     rows = conn.execute("SELECT * FROM skills ORDER BY category, name").fetchall()
+    return [dict(row) for row in rows]
+
+
+def add_project(conn, name, url=None, bullets=None) -> int:
+    cur = conn.execute(
+        "INSERT INTO projects (name, url, bullets) VALUES (?, ?, ?)",
+        (name, url, json.dumps(bullets or [])),
+    )
+    conn.commit()
+    return cur.lastrowid
+
+
+def list_projects(conn) -> list[dict]:
+    rows = conn.execute("SELECT * FROM projects ORDER BY id").fetchall()
+    result = []
+    for row in rows:
+        item = dict(row)
+        item["bullets"] = json.loads(item["bullets"])
+        result.append(item)
+    return result
+
+
+def add_certification(conn, name, issuer=None, date=None) -> int:
+    cur = conn.execute(
+        "INSERT INTO certifications (name, issuer, date) VALUES (?, ?, ?)",
+        (name, issuer, date),
+    )
+    conn.commit()
+    return cur.lastrowid
+
+
+def list_certifications(conn) -> list[dict]:
+    rows = conn.execute(
+        "SELECT * FROM certifications ORDER BY date DESC"
+    ).fetchall()
     return [dict(row) for row in rows]

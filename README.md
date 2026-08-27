@@ -1,28 +1,31 @@
 # CV Builder
 
 **CV Builder** turns a local SQLite database of your career history into a
-job-tailored CV. Add your profile, experience, education, and skills once —
-then hand Claude a company, role, and job description, and it fetches your
-real data through read-only tools, picks and rephrases the most relevant
-parts, and hands back a clean PDF. No fabricated experience, no
-copy-pasting into a template by hand.
+job-tailored CV. Add your profile, experience, education, skills, projects,
+and certifications once — then hand Claude a company, role, and job
+description, and it fetches your real data through read-only tools, picks
+and rephrases the most relevant parts, and hands back a clean PDF. No
+fabricated experience, no copy-pasting into a template by hand.
 
 Claude never sees your data hardcoded into a prompt. Instead, it is given a
-set of read-only tools to look up your profile, experiences, education, and
-skills from the database, then selects and rephrases the most relevant
-material for the target role. The result is rendered deterministically to
-PDF — Claude controls the content, not the page layout.
+set of read-only tools to look up your profile, experiences, education,
+skills, projects, and certifications from the database, then selects and
+rephrases the most relevant material for the target role. The result is
+rendered deterministically to PDF — Claude controls the content, not the
+page layout.
 
 ## How it works
 
 1. You store your data once via the CLI (`set-profile`, `add-experience`,
-   `add-education`, `add-skill`).
+   `add-education`, `add-skill`, `add-project`, `add-certification`).
 2. When you run `generate`, Claude is given a company, role, and job
-   description, plus four read-only tools:
+   description, plus six read-only tools:
    - `get_profile`
    - `list_experiences`
    - `list_education`
    - `list_skills`
+   - `list_projects`
+   - `list_certifications`
 3. Claude calls these tools to fetch your real data, selects/rephrases the
    most relevant experiences and skills for the job, and returns everything
    through a `submit_tailored_cv` tool call with a fixed JSON schema.
@@ -100,6 +103,25 @@ Add skills (space-separated, one `--category` per call):
 
 ```bash
 python main.py add-skill --name Python SQL Kubernetes --category "Technical"
+```
+
+Add a project or piece of technical writing (repeat `--bullet` for each
+description point):
+
+```bash
+python main.py add-project \
+  --name "Open-source monitoring CLI" \
+  --url "https://github.com/janedoe/monitoring-cli" \
+  --bullet "Built a Python CLI for programmatic alert and configuration management."
+```
+
+Add a certification:
+
+```bash
+python main.py add-certification \
+  --name "Certified Kubernetes Administrator" \
+  --issuer "CNCF" \
+  --date "2024"
 ```
 
 Review everything on file at any time:

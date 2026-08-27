@@ -35,6 +35,19 @@ TOOL_DEFINITIONS = [
         "description": "List the candidate's recorded skills, grouped by category.",
         "input_schema": {"type": "object", "properties": {}},
     },
+    {
+        "name": "list_projects",
+        "description": (
+            "List the candidate's side projects, open-source contributions, and "
+            "technical writing, each with a name, URL, and description bullets."
+        ),
+        "input_schema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "list_certifications",
+        "description": "List the candidate's certifications, each with a name, issuer, and date.",
+        "input_schema": {"type": "object", "properties": {}},
+    },
 ]
 
 _DISPATCH = {
@@ -42,6 +55,8 @@ _DISPATCH = {
     "list_experiences": lambda conn, _input: db.list_experiences(conn),
     "list_education": lambda conn, _input: db.list_education(conn),
     "list_skills": lambda conn, _input: db.list_skills(conn),
+    "list_projects": lambda conn, _input: db.list_projects(conn),
+    "list_certifications": lambda conn, _input: db.list_certifications(conn),
 }
 
 
