@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS profile (
     address TEXT,
     linkedin TEXT,
     website TEXT,
-    summary TEXT
+    summary TEXT,
+    career_goals TEXT
 );
 
 CREATE TABLE IF NOT EXISTS experiences (
@@ -52,11 +53,11 @@ def get_connection(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
 
 
 def set_profile(conn, full_name, email=None, phone=None, address=None,
-                 linkedin=None, website=None, summary=None):
+                 linkedin=None, website=None, summary=None, career_goals=None):
     conn.execute(
         """
-        INSERT INTO profile (id, full_name, email, phone, address, linkedin, website, summary)
-        VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO profile (id, full_name, email, phone, address, linkedin, website, summary, career_goals)
+        VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
             full_name=excluded.full_name,
             email=COALESCE(excluded.email, profile.email),
@@ -64,9 +65,10 @@ def set_profile(conn, full_name, email=None, phone=None, address=None,
             address=COALESCE(excluded.address, profile.address),
             linkedin=COALESCE(excluded.linkedin, profile.linkedin),
             website=COALESCE(excluded.website, profile.website),
-            summary=COALESCE(excluded.summary, profile.summary)
+            summary=COALESCE(excluded.summary, profile.summary),
+            career_goals=COALESCE(excluded.career_goals, profile.career_goals)
         """,
-        (full_name, email, phone, address, linkedin, website, summary),
+        (full_name, email, phone, address, linkedin, website, summary, career_goals),
     )
     conn.commit()
 

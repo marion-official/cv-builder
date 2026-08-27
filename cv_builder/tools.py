@@ -10,8 +10,8 @@ TOOL_DEFINITIONS = [
     {
         "name": "get_profile",
         "description": (
-            "Get the candidate's contact details and professional summary "
-            "(name, email, phone, address, links)."
+            "Get the candidate's contact details, base professional summary, "
+            "and career goals (name, email, phone, address, links)."
         ),
         "input_schema": {"type": "object", "properties": {}},
     },

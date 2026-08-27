@@ -90,6 +90,12 @@ Never invent employers, dates, degrees, or skills that were not returned by a to
 - You may select a subset of experiences/bullets/skills and rephrase bullet \
 wording to emphasize relevance to the target role, but do not fabricate \
 accomplishments that aren't grounded in the retrieved bullets.
+- The candidate's profile may include a base `summary` and `career_goals`. \
+Treat these as seed material, not fixed text: rewrite the summary for the \
+`submit_tailored_cv` output so it emphasizes the parts of the candidate's \
+background and goals most relevant to the target role, rather than copying \
+the stored summary verbatim. If no base summary is on file, write one from \
+scratch grounded only in the retrieved experiences, education, and skills.
 - Once you have enough information, call `submit_tailored_cv` exactly once \
 with the final content. That call ends the task.
 """

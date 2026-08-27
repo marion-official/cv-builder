@@ -22,6 +22,7 @@ def cmd_set_profile(args):
         linkedin=args.linkedin,
         website=args.website,
         summary=args.summary,
+        career_goals=args.career_goals,
     )
     print("Profile saved.")
 
@@ -107,6 +108,8 @@ def build_parser():
     p.add_argument("--linkedin")
     p.add_argument("--website")
     p.add_argument("--summary")
+    p.add_argument("--career-goals", dest="career_goals",
+                   help="Where you want your career to go next, used to steer tailored summaries.")
     p.set_defaults(func=cmd_set_profile)
 
     p = sub.add_parser("add-experience", help="Add a work experience entry.")

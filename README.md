@@ -58,7 +58,7 @@ cp .env.example .env
 
 ### 1. Add your data
 
-Set your contact details and summary:
+Set your contact details, summary, and career goals:
 
 ```bash
 python main.py set-profile \
@@ -67,8 +67,13 @@ python main.py set-profile \
   --phone "+44 000 000000" \
   --address "London, UK" \
   --linkedin "linkedin.com/in/janedoe" \
-  --summary "Backend engineer with 6 years of experience in distributed systems."
+  --summary "Backend engineer with 6 years of experience in distributed systems." \
+  --career-goals "Looking to move into a staff-level platform engineering role."
 ```
+
+`--summary` and `--career-goals` are optional seed material: when generating a
+tailored CV, Claude rewrites the summary for the target role rather than
+copying it verbatim, using your career goals to steer emphasis.
 
 Add a work experience (repeat `--bullet` for each achievement):
 
