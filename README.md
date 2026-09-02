@@ -158,12 +158,47 @@ python main.py generate \
 Optional: pick a different model with `--model` (defaults to
 `claude-sonnet-5`).
 
+### 3. Use it from Claude Desktop (MCP)
+
+`mcp_server.py` exposes the same data through the Model Context Protocol, so
+you can manage your CV directly in a Claude Desktop chat instead of the CLI.
+Unlike the read-only tools used by `generate`, this server is read/write:
+add/update your profile, experiences, education, skills, projects, and
+certifications, and render a tailored PDF, all from chat. Claude Desktop
+does the tailoring reasoning itself (it's already a model), so this server
+doesn't call the Anthropic API on its own — no `ANTHROPIC_API_KEY` needed to
+run it.
+
+Add it to Claude Desktop's config
+(`~/Library/Application Support/Claude/claude_desktop_config.json` on
+macOS):
+
+```json
+{
+  "mcpServers": {
+    "cv-builder": {
+      "command": "/absolute/path/to/cv-builder/.venv/bin/python",
+      "args": ["/absolute/path/to/cv-builder/mcp_server.py"]
+    }
+  }
+}
+```
+
+Restart Claude Desktop, and the `cv-builder` tools (`get_profile`,
+`set_profile`, `list_experiences`, `add_experience`, `list_education`,
+`add_education`, `list_skills`, `add_skills`, `list_projects`,
+`add_project`, `list_certifications`, `add_certification`, `render_cv`)
+become available in chat. Verify what a chat session changed with
+`python main.py list` or by asking the `cv-builder` MCP tools themselves —
+both read the same `cv_data.db`.
+
 ## Project layout
 
 ```
 main.py                 CLI entry point
+mcp_server.py            MCP server: read/write access to your data from an MCP client (e.g. Claude Desktop)
 cv_builder/db.py         SQLite schema and read/write functions
-cv_builder/tools.py       Read-only tool definitions Claude uses to fetch your data
+cv_builder/tools.py       Read-only tool definitions Claude uses to fetch your data during `generate`
 cv_builder/agent.py       Tool-use loop that drives Claude to produce tailored CV content
 cv_builder/pdf.py         Deterministic PDF rendering (ReportLab)
 ```
@@ -174,5 +209,7 @@ cv_builder/pdf.py         Deterministic PDF rendering (ReportLab)
   skills — only to select and rephrase from what the tools return — but
   this is prompt-level guidance, not an enforced guarantee. Review generated
   CVs before sending them out.
-- The database tools are read-only by design: Claude can look up your data
-  but cannot modify it.
+- The `generate` CLI command's tools are read-only by design: Claude can
+  look up your data but cannot modify it there. `mcp_server.py` is the
+  exception — it's read/write on purpose, since it's meant for you to
+  manage your own data through chat.
