@@ -6,9 +6,12 @@ Claude Desktop can manage the candidate's data through chat: adding
 experience, education, skills, projects, and certifications, and rendering
 tailored content to a PDF.
 
-Run with: pipenv run python mcp_server.py
+Run with Claude Desktop (stdio): pipenv run python mcp_server.py
+Run for a remote MCP client (Streamable HTTP):
+    pipenv run python mcp_server.py --transport streamable-http
 """
 
+import argparse
 from pathlib import Path
 
 from mcp.server.mcpserver import MCPServer
@@ -171,5 +174,43 @@ def render_cv(content: dict, output_path: str = "cv.pdf") -> str:
     return pdf.render_cv(content, resolved_path)
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run the CV Builder MCP server.",
+    )
+    parser.add_argument(
+        "--transport",
+        choices=("stdio", "streamable-http"),
+        default="stdio",
+        help="MCP transport to use (default: stdio, for Claude Desktop).",
+    )
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="HTTP host to bind when using streamable-http (default: 127.0.0.1).",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="HTTP port to bind when using streamable-http (default: 8000).",
+    )
+    parser.add_argument(
+        "--path",
+        default="/mcp",
+        help="HTTP path to serve when using streamable-http (default: /mcp).",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    server.run()
+    args = parse_args()
+    if args.transport == "stdio":
+        server.run()
+    else:
+        server.run(
+            transport="streamable-http",
+            host=args.host,
+            port=args.port,
+            streamable_http_path=args.path,
+        )
