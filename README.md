@@ -192,6 +192,33 @@ become available in chat. Verify what a chat session changed with
 `python main.py list` or by asking the `cv-builder` MCP tools themselves —
 both read the same `cv_data.db`.
 
+### 4. Use it from ChatGPT (MCP)
+
+The server's default `stdio` transport is for Claude Desktop. ChatGPT
+Desktop can connect directly to a local Streamable HTTP MCP endpoint.
+
+Start the server locally:
+
+```bash
+pipenv run python mcp_server.py --transport streamable-http
+```
+
+It listens only on `127.0.0.1:8000` at `/mcp` by default. Keep this command
+running, then in ChatGPT Desktop:
+
+1. Open **Settings → MCP servers → Add server**.
+2. Name the server `cv-builder`.
+3. Choose **Streamable HTTP** and enter
+   `http://127.0.0.1:8000/mcp` as the server URL.
+4. Save the server and select **Restart**.
+
+The `/mcp` suffix is required; `http://127.0.0.1:8000` alone is not the MCP
+endpoint. In a new chat, type `/mcp` to check that `cv-builder` is connected.
+
+The same tools are available in ChatGPT as in Claude Desktop. The server is
+read/write, so review ChatGPT's confirmation prompt before allowing it to
+change CV data or write a PDF.
+
 ## Project layout
 
 ```
